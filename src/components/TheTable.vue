@@ -10,12 +10,14 @@
       <button type="button">
         <gearWheel />
       </button>
-      <!-- <p>{{ selectedNameUnits }}</p> -->
+    </div>
+    <div>
+      <DisplayColumnsMenu @get-checked-names="getCheckedNames" />
     </div>
     <table>
       <thead>
         <tr>
-          <th scope="col" v-for="(item) in col">
+          <th scope="col" v-for="(item, i) in col">
             <span @mouseover="mouseOver" @mouseleave="mouseLeave">
               {{ item.label }}
             </span>
@@ -24,7 +26,7 @@
       </thead>
       <tbody>
         <tr v-for="(item, index) in tableDataConverter" :key="item.id">
-          <th scope="row" v-for="el in item">
+          <th scope="row" v-for="(el) in item">
             <div v-if="item.nameUnit !== el && item.id !== el"> {{ el }}</div>
             <div v-if="item.id === el">
               <span>{{ index + 1 }}</span>
@@ -63,15 +65,12 @@ import CrossIcon from "@/assets/images/cross.svg";
 import { col, tableData, options } from '@/assets/data/data.js';
 import { triangle } from '@/assets/constants/constants.js';
 import TheBasket from '@/components/TheBasket.vue';
-
-// эмиты
-// const emit = defineEmits(['addRow']);
-// const emit = defineProps({
-//   addRow: Function,
-// })
+import DisplayColumnsMenu from '@/components/DisplayColumnsMenu.vue';
 
 // данные
 const isSelect = ref(false);
+const isCheckedNames = ref(reactive([]));
+const hideElementIndex = ref(reactive([]));
 const isDeleteId = ref('');
 const isSelectRowEvent = ref({});
 const dropCol = toRef(reactive(_.cloneDeep(col)));
@@ -85,6 +84,37 @@ const selectedNameUnits = toRef(reactive(_.cloneDeep(options)));
 const selectedNameUnitsComputed = computed(() => tableDataConverter.value.map(item => item.nameUnit));
 
 // методы
+const getCheckedNames = (checkedNames) => {
+  isCheckedNames.value = checkedNames;
+  const columnNames = dropCol.value.map(item => item.prop);
+  const keys = Object.keys(checkedNames);
+  const hideElementKeys = keys.filter(key => !checkedNames[key]);
+  const hideElementIndexArr = hideElementKeys.map(item => columnNames.indexOf(item) + 1);
+
+  hideElementIndex.value = [...hideElementIndexArr];
+  columnVisibility();
+  columnVisibilityIndex();
+};
+
+const columnVisibilityIndex = () => {
+  if (hideElementIndex.value.length)
+    hideElementIndex.value.forEach(index => columnVisibilityNone(index));
+};
+
+const columnVisibilityNone = (columnIndex) => {
+  const cols = document.querySelectorAll(`td:nth-child(${columnIndex}), th:nth-child(${columnIndex})`);
+  cols.forEach(function (col) {
+    col.style.display = 'none';
+  });
+}
+
+function columnVisibility() {
+  const cols = document.querySelectorAll("td, th");
+  cols.forEach(function (col) {
+    col.style.display = '';
+  });
+}
+
 const rowObj = () => {
   const keys = Object.keys(tableDataConverter.value[0]);
   const obj = keys.reduce((acc, curr) => (acc[curr] = '', acc), {});
@@ -98,11 +128,13 @@ const rowObj = () => {
 const addRow = () => {
   selectedNameUnits.value.push(rowObj().nameUnit);
   tableDataConverter.value.push(rowObj());
+  nextTick(() => columnVisibilityIndex());
 };
 
 const deleteProduct = () => {
   const newTableData = tableDataConverter.value.filter(item => item.id !== isDeleteId.value);
   tableDataConverter.value = newTableData;
+  nextTick(() => columnVisibilityIndex());
 };
 
 const getUniqId = () => String(Math.floor(new Date().valueOf() * Math.random()));
@@ -122,7 +154,10 @@ const addDataProduct = () => {
   });
 
   tableDataConverter.value = newTableData;
-  nextTick(() => addTriangleIcon());
+  nextTick(() => {
+    addTriangleIcon();
+    columnVisibilityIndex();
+  });
 };
 
 const rowDrop = () => {
@@ -135,6 +170,7 @@ const rowDrop = () => {
       tableDataConverter.value.splice(newIndex, 0, currRow);
       isSelect.value = false;
       selectedNameUnits.value = selectedNameUnitsComputed.value;
+      columnVisibilityIndex();
     },
   });
 };
@@ -151,6 +187,11 @@ const columnDrop = () => {
       dropCol.value.splice(evt.newIndex, 0, oldItem);
       tableDataConverter.value = converter(tableDataConverter.value);
       tableDataCopy.value = converter(tableDataCopy.value);
+
+      nextTick(() => {
+        columnVisibility();
+        getCheckedNames(isCheckedNames.value);
+      });
     },
   });
 };
@@ -282,15 +323,15 @@ watch(isSelect, (newIsSelect) => {
   }
 });
 
-watch(tableDataConverter, (newTableDataConverter) => {
-  // console.log('newTableDataConverter', newTableDataConverter);
-}, { deep: true });
-
 watch(selectedNameUnits, (newsSelectedNameUnits) => {
   if (newsSelectedNameUnits) {
-    // console.log('newsSelectedNameUnits', newsSelectedNameUnits);
     addDataProduct();
   }
+}, { deep: true });
+
+
+watch(hideElementIndex, (newHideElementIndex) => {
+  console.log('newHideElementIndex', newHideElementIndex);
 }, { deep: true });
 </script>
 
