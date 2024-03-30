@@ -28,14 +28,14 @@
         @display-columns-menu-toggle="displayColumnsMenuToggle"
       />
     </div>
-    <!-- <TheTable /> -->
+    <TheTable />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import gearWheel from "@/assets/images/gearWheel.svg";
-//import TheTable from "@/components/TheTable.vue";
+import TheTable from "@/components/TheTable.vue";
 import ContentMenu from "@/components/ContentMenu.vue";
 import DisplayColumnsMenu from "@/components/DisplayColumnsMenu.vue";
 import threeLines from "@/assets/images/threeLines.svg";
@@ -107,6 +107,7 @@ const displayColumnsMenuToggle = () => {
     li {
       font-weight: 600;
       color: #1253a2;
+      cursor: pointer;
 
       &:nth-child(2) {
         margin: 0 25px 0 20px;
@@ -124,6 +125,7 @@ const displayColumnsMenuToggle = () => {
 
   &__menu-button {
     display: block;
+    cursor: pointer;
 
     @media screen and (max-width: 767px) {
       display: none;

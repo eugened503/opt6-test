@@ -1,76 +1,71 @@
 <template>
   <div class="table-wrapper">
-    <div>
-      <button
-        type="button"
-        class="table-wrapper__add-row-button"
-        @click="addRow"
-      >
+    <div class="table-wrapper__header">
+      <button type="button" class="table-wrapper__add-row-button" @click="addRow">
         <CrossIcon />
         Добавить строку
       </button>
     </div>
-    <div>
-      Сохранить изменения
-      <button type="button">
-        <gearWheel />
-      </button>
-    </div>
-    <div>
+    <div class="table-wrapper__body">
+      <div class="table-wrapper__body-header">
+        <div class="table-wrapper__body-header-content">
+          <span> Сохранить изменения</span>
+          <button type="button">
+            <gearWheel />
+          </button>
+        </div>
+      </div>
+      <!-- <div>
       <DisplayColumnsMenu @get-checked-names="getCheckedNames" />
+    </div> -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" v-for="(item) in col">
+              <span v-if="item.label !== 'id' && item.label !== 'action'" @mouseover="mouseOver"
+                @mouseleave="mouseLeave">
+                {{ item.label }}
+              </span>
+              <span v-else @mouseover="mouseOver" @mouseleave="mouseLeave">
+                &nbsp;
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in tableDataConverter" :key="item.id">
+            <th scope="row" v-for="el in item">
+              <div v-if="item.nameUnit !== el && item.id !== el && item.action !== el && '' !== el" class="table__cell-content">
+                {{ el }}
+                <button v-if="item.productName === el" class="table__cell-button">
+                  <triangleSvg class="rotate " />
+                </button>
+              </div>
+              <div class="table__buttons" v-if="item.id === el">
+                <span>{{ index + 1 }}</span>
+                <button class="table__button-col" type="button" @mouseover="mouseOverSelectRow"
+                  @mouseleave="mouseLeaveSelectRow">
+                  <threeLines />
+                </button>
+              </div>
+              <div v-if="item.action === el && item.action === null" class="table__action-buttons">
+                <button type="button" @click="isDeleteId = isDeleteId === item.id ? null : item.id">
+                  <threeDots />
+                </button>
+                <button v-if="item.id === isDeleteId" type="button" class="table__delete-button" @click="deleteProduct">
+                  удалить
+                </button>
+              </div>
+              <div v-if="item.nameUnit && item.nameUnit === el" class="table__select">
+                <v-select v-model="selectedNameUnits[selectedNameUnits.indexOf(item.nameUnit)]" :options="options" />
+                <!-- <v-select v-model="selectedNameUnits[index]" :options="options" /> -->
+              </div>
+            </th>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col" v-for="(item, i) in col">
-            <span @mouseover="mouseOver" @mouseleave="mouseLeave">
-              {{ item.label }}
-            </span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) in tableDataConverter" :key="item.id">
-          <th scope="row" v-for="el in item">
-            <div v-if="item.nameUnit !== el && item.id !== el">{{ el }}</div>
-            <div v-if="item.id === el">
-              <span>{{ index + 1 }}</span>
-              <button
-                class="button-col"
-                type="button"
-                @mouseover="mouseOverSelectRow"
-                @mouseleave="mouseLeaveSelectRow"
-              >
-                <threeLines />
-              </button>
-            </div>
-            <div
-              v-if="item.action === el && item.action === null"
-              class="action-buttons"
-            >
-              <button
-                type="button"
-                @click="isDeleteId = isDeleteId === item.id ? null : item.id"
-              >
-                <threeDots />
-              </button>
-              <button
-                v-if="item.id === isDeleteId"
-                type="button"
-                class="delete-button"
-                @click="deleteProduct"
-              >
-                удалить
-              </button>
-            </div>
-            <div v-if="item.nameUnit && item.nameUnit === el">
-              <v-select v-model="selectedNameUnits[index]" :options="options" />
-            </div>
-          </th>
-        </tr>
-      </tbody>
-    </table>
-    <TheBasket />
+    <!-- <TheBasket /> -->
   </div>
 </template>
 
@@ -87,6 +82,7 @@ import {
 } from "vue";
 import _ from "lodash";
 import gearWheel from "@/assets/images/gearWheel.svg";
+import triangleSvg from "@/assets/images/triangle.svg";
 import threeLines from "@/assets/images/threeLines.svg";
 import threeDots from "@/assets/images/threeDots.svg";
 import CrossIcon from "@/assets/images/cross.svg";
@@ -345,6 +341,17 @@ const addTriangleIcon = () => {
   });
 };
 
+const styleTable = () => {
+  const colsThead = document.querySelectorAll("thead th");
+  colsThead[0].style.width = "calc(50 / 1460 * 100%)";
+  colsThead[1].style.width = "calc(30 / 1460 * 100%)";
+  colsThead[2].style.width = "calc(630 / 1460 * 100%)";
+  colsThead[3].style.width = "calc(218 / 1460 * 100%)";
+  colsThead[4].style.width = "calc(218 / 1460 * 100%)";
+  colsThead[5].style.width = "calc(170 / 1460 * 100%)";
+  colsThead[6].style.width = "calc(151 / 1460 * 100%)";
+};
+
 // хуки
 onMounted(() => {
   rowDrop();
@@ -353,6 +360,7 @@ onMounted(() => {
   nextTick(() => {
     buttonListeners();
     addTriangleIcon();
+    styleTable();
   });
 });
 
@@ -382,28 +390,93 @@ watch(
   },
   { deep: true },
 );
+
+watch(
+  tableDataConverter,
+  (newTableDataConverter) => {
+    console.log("newTableDataConverter", newTableDataConverter);
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped lang="scss">
 .table-wrapper {
+  margin: 25px 0 0;
+
+  &__header {
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    border: solid 1px #eeeff1;
+    background-color: #fff;
+  }
+
   &__add-row-button {
-    background-color: aquamarine;
-    padding: 10px;
-    margin: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #2f8cff;
+    border-radius: 5px;
+    padding: 15px 10px;
+    color: #fff;
+    font-size: 14px;
+    gap: 7px;
     cursor: pointer;
+  }
+
+  &__body {
+    margin: 25px 0 0 0;
+    padding: 0 0 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+    border-radius: 10px;
+    border: solid 1px #eeeff1;
+    background-color: #fff;
+  }
+
+  &__body-header {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__body-header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    span {
+      color: #a6b7d4;
+      font-size: 12px;
+    }
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
   }
 
   table {
     width: 100%;
-    border-top: 7px solid rgb(43, 129, 17);
     border-collapse: collapse;
-    text-align: center;
-    margin-bottom: 20px;
-    border: 1px solid #dddddd;
+    border: none;
+    text-align: left;
+    background-color: #fff;
+    white-space: nowrap;
 
     thead {
       th {
+        border: 1px solid #eeeff1;
         cursor: pointer;
+        padding: 14px 10px;
+        overflow: hidden;
+
+        span {
+          display: block;
+          font-weight: 600;
+        }
       }
 
       span {
@@ -423,24 +496,29 @@ watch(
 
     td {
       text-align: left;
-      padding: 10px;
-      border: 3px solid rgb(43, 129, 17);
     }
 
     th {
-      text-align: center;
-      padding: 10px;
-      border: 3px solid rgb(43, 129, 17);
+      text-align: left;
     }
 
     tbody {
       button {
-        width: 20px;
-        height: 20px;
         cursor: pointer;
       }
-    }
 
+
+      th {
+        padding: 5px 7px 0 7px;
+
+        span {
+          margin: 0 5px 0 0;
+        }
+      }
+    }
+  }
+
+  .table {
     .active {
       border: red 4px dashed;
     }
@@ -451,13 +529,46 @@ watch(
       transform: rotate(-90deg);
     }
 
-    .action-buttons {
+    &__action-buttons {
+      position: relative;
       display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .delete-button {
-      background-color: brown;
-      flex: 1;
+    &__delete-button {
+      position: absolute;
+      top: 32px;
+      left: 12px;
+      width: 179px;
+      padding: 7px 19px;
+      border-radius: 5px;
+      box-shadow: 0 0 3px 0 #000, inset 0 1px 2px 0 rgba(255, 255, 255, 0.5);
+      background-color: #fff;
+      z-index: 2;
+      font-size: 14px;
+      color: #ae0a0a;
+    }
+
+    &__cell-content {
+      position: relative;
+      border-radius: 5px;
+      border: solid 1px #ccc;
+      background-color: #fff;
+      padding: 10px 15px 9px;
+    }
+
+    &__cell-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 21px;
+      height: 100%;
+      border-radius: 0 4px 4px 0;
+      background-color: #f6f5f3;
     }
   }
 }
@@ -471,21 +582,60 @@ watch(
 
   &__selected {
     opacity: 1 !important;
+    overflow: hidden;
+    text-wrap: nowrap;
+    margin-top: 8px !important;
+  }
+
+  &__selected-options {
+    flex-wrap: nowrap !important;
   }
 
   &__search {
+    margin-top: 8px !important;
   }
 
   &__open-indicator {
     display: none;
   }
 
+  &__actions {
+    padding: 0 !important;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    justify-content: center;
+    width: 21px;
+    height: 95%;
+    border-radius: 0 4px 4px 0;
+    background-color: #f6f5f3;
+  }
+
+  &__dropdown-toggle {
+    border-radius: 5px !important;
+    border: solid 1px #ccc !important;
+    background-color: #fff !important;
+  }
+
   &__dropdown-menu {
+    margin-top: 7px !important;
+    border-radius: 5px !important;
+    border: solid 1px #ccc !important;
+    background-color: #fff !important;
+
+    li {
+      font-size: 14px;
+      color: #161616;
+    }
   }
 
   .vs1 {
-    &__listbox {
-    }
+    &__listbox {}
   }
+}
+
+#vs4__listbox {
+  visibility: visible !important;
+  display: block !important;
 }
 </style>
