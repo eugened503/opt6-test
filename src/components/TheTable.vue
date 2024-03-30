@@ -1,12 +1,17 @@
 <template>
   <div class="table-wrapper">
     <div>
-      <button type="button" class="table-wrapper__add-row-button" @click="addRow">
+      <button
+        type="button"
+        class="table-wrapper__add-row-button"
+        @click="addRow"
+      >
         <CrossIcon />
         Добавить строку
       </button>
     </div>
-    <div>Сохранить изменения
+    <div>
+      Сохранить изменения
       <button type="button">
         <gearWheel />
       </button>
@@ -26,20 +31,35 @@
       </thead>
       <tbody>
         <tr v-for="(item, index) in tableDataConverter" :key="item.id">
-          <th scope="row" v-for="(el) in item">
-            <div v-if="item.nameUnit !== el && item.id !== el"> {{ el }}</div>
+          <th scope="row" v-for="el in item">
+            <div v-if="item.nameUnit !== el && item.id !== el">{{ el }}</div>
             <div v-if="item.id === el">
               <span>{{ index + 1 }}</span>
-              <button class="button-col" type="button" @mouseover="mouseOverSelectRow"
-                @mouseleave="mouseLeaveSelectRow">
+              <button
+                class="button-col"
+                type="button"
+                @mouseover="mouseOverSelectRow"
+                @mouseleave="mouseLeaveSelectRow"
+              >
                 <threeLines />
               </button>
             </div>
-            <div v-if="item.action === el && item.action === null" class="action-buttons">
-              <button type="button" @click="isDeleteId = isDeleteId === item.id ? null : item.id">
+            <div
+              v-if="item.action === el && item.action === null"
+              class="action-buttons"
+            >
+              <button
+                type="button"
+                @click="isDeleteId = isDeleteId === item.id ? null : item.id"
+              >
                 <threeDots />
               </button>
-              <button v-if="item.id === isDeleteId" type="button" class="delete-button" @click="deleteProduct">
+              <button
+                v-if="item.id === isDeleteId"
+                type="button"
+                class="delete-button"
+                @click="deleteProduct"
+              >
                 удалить
               </button>
             </div>
@@ -56,22 +76,30 @@
 
 <script setup>
 import Sortable from "sortablejs";
-import { onMounted, ref, nextTick, watch, toRef, reactive, computed } from "vue";
-import _ from 'lodash';
+import {
+  onMounted,
+  ref,
+  nextTick,
+  watch,
+  toRef,
+  reactive,
+  computed,
+} from "vue";
+import _ from "lodash";
 import gearWheel from "@/assets/images/gearWheel.svg";
 import threeLines from "@/assets/images/threeLines.svg";
 import threeDots from "@/assets/images/threeDots.svg";
 import CrossIcon from "@/assets/images/cross.svg";
-import { col, tableData, options } from '@/assets/data/data.js';
-import { triangle } from '@/assets/constants/constants.js';
-import TheBasket from '@/components/TheBasket.vue';
-import DisplayColumnsMenu from '@/components/DisplayColumnsMenu.vue';
+import { col, tableData, options } from "@/assets/data/data.js";
+import { triangle } from "@/assets/constants/constants.js";
+import TheBasket from "@/components/TheBasket.vue";
+import DisplayColumnsMenu from "@/components/DisplayColumnsMenu.vue";
 
 // данные
 const isSelect = ref(false);
 const isCheckedNames = ref(reactive([]));
 const hideElementIndex = ref(reactive([]));
-const isDeleteId = ref('');
+const isDeleteId = ref("");
 const isSelectRowEvent = ref({});
 const dropCol = toRef(reactive(_.cloneDeep(col)));
 const tableDataCopy = toRef(reactive(_.cloneDeep(tableData)));
@@ -81,15 +109,19 @@ const rowDropSortable = toRef(reactive({}));
 const selectedNameUnits = toRef(reactive(_.cloneDeep(options)));
 
 // вычисляемые св-ва
-const selectedNameUnitsComputed = computed(() => tableDataConverter.value.map(item => item.nameUnit));
+const selectedNameUnitsComputed = computed(() =>
+  tableDataConverter.value.map((item) => item.nameUnit),
+);
 
 // методы
 const getCheckedNames = (checkedNames) => {
   isCheckedNames.value = checkedNames;
-  const columnNames = dropCol.value.map(item => item.prop);
+  const columnNames = dropCol.value.map((item) => item.prop);
   const keys = Object.keys(checkedNames);
-  const hideElementKeys = keys.filter(key => !checkedNames[key]);
-  const hideElementIndexArr = hideElementKeys.map(item => columnNames.indexOf(item) + 1);
+  const hideElementKeys = keys.filter((key) => !checkedNames[key]);
+  const hideElementIndexArr = hideElementKeys.map(
+    (item) => columnNames.indexOf(item) + 1,
+  );
 
   hideElementIndex.value = [...hideElementIndexArr];
   columnVisibility();
@@ -98,26 +130,28 @@ const getCheckedNames = (checkedNames) => {
 
 const columnVisibilityIndex = () => {
   if (hideElementIndex.value.length)
-    hideElementIndex.value.forEach(index => columnVisibilityNone(index));
+    hideElementIndex.value.forEach((index) => columnVisibilityNone(index));
 };
 
 const columnVisibilityNone = (columnIndex) => {
-  const cols = document.querySelectorAll(`td:nth-child(${columnIndex}), th:nth-child(${columnIndex})`);
+  const cols = document.querySelectorAll(
+    `td:nth-child(${columnIndex}), th:nth-child(${columnIndex})`,
+  );
   cols.forEach(function (col) {
-    col.style.display = 'none';
+    col.style.display = "none";
   });
-}
+};
 
 function columnVisibility() {
   const cols = document.querySelectorAll("td, th");
   cols.forEach(function (col) {
-    col.style.display = '';
+    col.style.display = "";
   });
 }
 
 const rowObj = () => {
   const keys = Object.keys(tableDataConverter.value[0]);
-  const obj = keys.reduce((acc, curr) => (acc[curr] = '', acc), {});
+  const obj = keys.reduce((acc, curr) => ((acc[curr] = ""), acc), {});
   obj.id = getUniqId();
   obj.action = null;
   obj.nameUnit = "Выберите значение";
@@ -132,14 +166,18 @@ const addRow = () => {
 };
 
 const deleteProduct = () => {
-  const newTableData = tableDataConverter.value.filter(item => item.id !== isDeleteId.value);
+  const newTableData = tableDataConverter.value.filter(
+    (item) => item.id !== isDeleteId.value,
+  );
   tableDataConverter.value = newTableData;
   nextTick(() => columnVisibilityIndex());
 };
 
-const getUniqId = () => String(Math.floor(new Date().valueOf() * Math.random()));
+const getUniqId = () =>
+  String(Math.floor(new Date().valueOf() * Math.random()));
 
-const getProduct = (value) => tableDataCopy.value.find((item) => item.nameUnit === value);
+const getProduct = (value) =>
+  tableDataCopy.value.find((item) => item.nameUnit === value);
 
 const addDataProduct = () => {
   const newTableData = [];
@@ -275,33 +313,35 @@ const mouseOverSelectRow = () => {
 };
 
 const mouseLeaveSelectRow = () => {
-  rowDropSortable.value.options.disabled = true;;
+  rowDropSortable.value.options.disabled = true;
 };
 
 const buttonListeners = () => {
   document.addEventListener("mousedown", function (e) {
-    if (e.target.classList.contains('button-col')) {
-      e.target.parentElement.parentElement.parentElement.classList.add('active');
+    if (e.target.classList.contains("button-col")) {
+      e.target.parentElement.parentElement.parentElement.classList.add(
+        "active",
+      );
       isSelectRowEvent.value = e;
       isSelect.value = true;
     }
   });
 
   document.addEventListener("mouseup", function (e) {
-    if (e.target.classList.contains('button-col')) {
+    if (e.target.classList.contains("button-col")) {
       isSelect.value = false;
     }
   });
 };
 
 const addTriangleIcon = () => {
-  const actionAll = document.querySelectorAll('.vs__actions');
+  const actionAll = document.querySelectorAll(".vs__actions");
   actionAll.forEach((action) => {
     action.innerHTML = triangle;
-    const svg = action.querySelector('svg');
-    svg.style.width = '5px';
-    svg.style.height = '5px';
-    svg.style.transform = 'rotate(-90deg)';
+    const svg = action.querySelector("svg");
+    svg.style.width = "5px";
+    svg.style.height = "5px";
+    svg.style.transform = "rotate(-90deg)";
   });
 };
 
@@ -319,20 +359,29 @@ onMounted(() => {
 // наблюдатели
 watch(isSelect, (newIsSelect) => {
   if (!newIsSelect) {
-    isSelectRowEvent.value.target.parentElement.parentElement.parentElement.classList.remove("active");
+    isSelectRowEvent.value.target.parentElement.parentElement.parentElement.classList.remove(
+      "active",
+    );
   }
 });
 
-watch(selectedNameUnits, (newsSelectedNameUnits) => {
-  if (newsSelectedNameUnits) {
-    addDataProduct();
-  }
-}, { deep: true });
+watch(
+  selectedNameUnits,
+  (newsSelectedNameUnits) => {
+    if (newsSelectedNameUnits) {
+      addDataProduct();
+    }
+  },
+  { deep: true },
+);
 
-
-watch(hideElementIndex, (newHideElementIndex) => {
-  console.log('newHideElementIndex', newHideElementIndex);
-}, { deep: true });
+watch(
+  hideElementIndex,
+  (newHideElementIndex) => {
+    console.log("newHideElementIndex", newHideElementIndex);
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped lang="scss">
@@ -424,16 +473,19 @@ watch(hideElementIndex, (newHideElementIndex) => {
     opacity: 1 !important;
   }
 
-  &__search {}
+  &__search {
+  }
 
   &__open-indicator {
     display: none;
   }
 
-  &__dropdown-menu {}
+  &__dropdown-menu {
+  }
 
   .vs1 {
-    &__listbox {}
+    &__listbox {
+    }
   }
 }
 </style>

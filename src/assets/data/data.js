@@ -67,15 +67,6 @@ export const tableData = [
     productName: "Мраморный щебень",
     total: "1231",
   },
-  // {
-  //   id: "5",
-  //   action: null,
-  //   nameUnit: true,
-  //   price: "",
-  //   quantity: "",
-  //   productName: "",
-  //   total: "",
-  // },
 ];
 
 export const options = [
