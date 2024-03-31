@@ -1,7 +1,11 @@
 <template>
   <div class="table-wrapper">
     <div class="table-wrapper__header">
-      <button type="button" class="table-wrapper__add-row-button" @click="addRow">
+      <button
+        type="button"
+        class="table-wrapper__add-row-button"
+        @click="addRow"
+      >
         <CrossIcon />
         Добавить строку
       </button>
@@ -9,21 +13,21 @@
     <div class="table-wrapper__body">
       <div class="table-wrapper__body-header">
         <div class="table-wrapper__body-header-content">
-          <span> Сохранить изменения</span>
+          <span>Сохранить изменения</span>
           <button type="button">
             <gearWheel />
           </button>
         </div>
       </div>
-      <!-- <div>
-      <DisplayColumnsMenu @get-checked-names="getCheckedNames" />
-    </div> -->
       <table class="table">
         <thead>
           <tr>
-            <th scope="col" v-for="(item) in col">
-              <span v-if="item.label !== 'id' && item.label !== 'action'" @mouseover="mouseOver"
-                @mouseleave="mouseLeave">
+            <th scope="col" v-for="item in col">
+              <span
+                v-if="item.label !== 'id' && item.label !== 'action'"
+                @mouseover="mouseOver"
+                @mouseleave="mouseLeave"
+              >
                 {{ item.label }}
               </span>
               <span v-else @mouseover="mouseOver" @mouseleave="mouseLeave">
@@ -35,37 +39,87 @@
         <tbody>
           <tr v-for="(item, index) in tableDataConverter" :key="item.id">
             <th scope="row" v-for="el in item">
-              <div v-if="item.nameUnit !== el && item.id !== el && item.action !== el && '' !== el" class="table__cell-content">
-                {{ el }}
-                <button v-if="item.productName === el" class="table__cell-button">
-                  <triangleSvg class="rotate " />
-                </button>
-              </div>
-              <div class="table__buttons" v-if="item.id === el">
-                <span>{{ index + 1 }}</span>
-                <button class="table__button-col" type="button" @mouseover="mouseOverSelectRow"
-                  @mouseleave="mouseLeaveSelectRow">
-                  <threeLines />
-                </button>
-              </div>
-              <div v-if="item.action === el && item.action === null" class="table__action-buttons">
-                <button type="button" @click="isDeleteId = isDeleteId === item.id ? null : item.id">
-                  <threeDots />
-                </button>
-                <button v-if="item.id === isDeleteId" type="button" class="table__delete-button" @click="deleteProduct">
-                  удалить
-                </button>
-              </div>
-              <div v-if="item.nameUnit && item.nameUnit === el" class="table__select">
-                <v-select v-model="selectedNameUnits[selectedNameUnits.indexOf(item.nameUnit)]" :options="options" />
-                <!-- <v-select v-model="selectedNameUnits[index]" :options="options" /> -->
+              <div>
+                <span v-if="item.price === el && '' !== el" class="title"
+                  >Цена</span
+                >
+                <span v-if="item.quantity === el && '' !== el" class="title"
+                  >Кол-во</span
+                >
+                <span v-if="item.productName === el && '' !== el" class="title"
+                  >Название товара</span
+                >
+                <span v-if="item.total === el && '' !== el" class="title"
+                  >Итого</span
+                >
+                <div
+                  v-if="
+                    item.nameUnit !== el &&
+                    item.id !== el &&
+                    item.action !== el &&
+                    '' !== el
+                  "
+                  class="table__cell-content"
+                >
+                  {{ el }}
+                  <button
+                    v-if="item.productName === el"
+                    class="table__cell-button"
+                  >
+                    <triangleSvg class="rotate" />
+                  </button>
+                </div>
+                <div class="table__buttons" v-if="item.id === el">
+                  <span class="title">Номер строки</span>
+                  <button
+                    class="table__button-col"
+                    type="button"
+                    @mouseover="mouseOverSelectRow"
+                    @mouseleave="mouseLeaveSelectRow"
+                  >
+                    <threeLines />
+                    <span>{{ index + 1 }}</span>
+                  </button>
+                </div>
+                <div
+                  v-if="item.action === el && item.action === null"
+                  class="table__action-buttons"
+                >
+                  <span class="title">Действие</span>
+                  <button
+                    type="button"
+                    @click="
+                      isDeleteId = isDeleteId === item.id ? null : item.id
+                    "
+                  >
+                    <threeDots />
+                  </button>
+                  <button
+                    v-if="item.id === isDeleteId"
+                    type="button"
+                    class="table__delete-button"
+                    @click="deleteProduct(index)"
+                  >
+                    удалить
+                  </button>
+                </div>
+                <div
+                  v-if="item.nameUnit && item.nameUnit === el"
+                  class="table__select"
+                >
+                  <span class="title">Наименование единицы</span>
+                  <v-select
+                    v-model="selectedNameUnits[index]"
+                    :options="options"
+                  />
+                </div>
               </div>
             </th>
           </tr>
         </tbody>
       </table>
+      <TheBasket />
     </div>
-    <!-- <TheBasket /> -->
   </div>
 </template>
 
@@ -89,7 +143,11 @@ import CrossIcon from "@/assets/images/cross.svg";
 import { col, tableData, options } from "@/assets/data/data.js";
 import { triangle } from "@/assets/constants/constants.js";
 import TheBasket from "@/components/TheBasket.vue";
-import DisplayColumnsMenu from "@/components/DisplayColumnsMenu.vue";
+
+// пропсы
+const props = defineProps({
+  checkedNamesArr: Array,
+});
 
 // данные
 const isSelect = ref(false);
@@ -161,7 +219,8 @@ const addRow = () => {
   nextTick(() => columnVisibilityIndex());
 };
 
-const deleteProduct = () => {
+const deleteProduct = (index) => {
+  selectedNameUnits.value.splice(index, 1);
   const newTableData = tableDataConverter.value.filter(
     (item) => item.id !== isDeleteId.value,
   );
@@ -314,7 +373,8 @@ const mouseLeaveSelectRow = () => {
 
 const buttonListeners = () => {
   document.addEventListener("mousedown", function (e) {
-    if (e.target.classList.contains("button-col")) {
+    if (e.target.classList.contains("table__button-col")) {
+      console.log("mousedown");
       e.target.parentElement.parentElement.parentElement.classList.add(
         "active",
       );
@@ -324,7 +384,8 @@ const buttonListeners = () => {
   });
 
   document.addEventListener("mouseup", function (e) {
-    if (e.target.classList.contains("button-col")) {
+    if (e.target.classList.contains("table__button-col")) {
+      console.log("mouseup");
       isSelect.value = false;
     }
   });
@@ -341,16 +402,16 @@ const addTriangleIcon = () => {
   });
 };
 
-const styleTable = () => {
-  const colsThead = document.querySelectorAll("thead th");
-  colsThead[0].style.width = "calc(50 / 1460 * 100%)";
-  colsThead[1].style.width = "calc(30 / 1460 * 100%)";
-  colsThead[2].style.width = "calc(630 / 1460 * 100%)";
-  colsThead[3].style.width = "calc(218 / 1460 * 100%)";
-  colsThead[4].style.width = "calc(218 / 1460 * 100%)";
-  colsThead[5].style.width = "calc(170 / 1460 * 100%)";
-  colsThead[6].style.width = "calc(151 / 1460 * 100%)";
-};
+// const styleTable = () => {
+//   const colsThead = document.querySelectorAll("thead th");
+//   colsThead[0].style.width = "calc(50 / 1460 * 100%)";
+//   colsThead[1].style.width = "calc(30 / 1460 * 100%)";
+//   colsThead[2].style.width = "calc(630 / 1460 * 100%)";
+//   colsThead[3].style.width = "calc(218 / 1460 * 100%)";
+//   colsThead[4].style.width = "calc(218 / 1460 * 100%)";
+//   colsThead[5].style.width = "calc(170 / 1460 * 100%)";
+//   colsThead[6].style.width = "calc(151 / 1460 * 100%)";
+// };
 
 // хуки
 onMounted(() => {
@@ -360,7 +421,7 @@ onMounted(() => {
   nextTick(() => {
     buttonListeners();
     addTriangleIcon();
-    styleTable();
+    //styleTable();
   });
 });
 
@@ -384,17 +445,9 @@ watch(
 );
 
 watch(
-  hideElementIndex,
-  (newHideElementIndex) => {
-    console.log("newHideElementIndex", newHideElementIndex);
-  },
-  { deep: true },
-);
-
-watch(
-  tableDataConverter,
-  (newTableDataConverter) => {
-    console.log("newTableDataConverter", newTableDataConverter);
+  props,
+  (newProps) => {
+    getCheckedNames(newProps.checkedNamesArr[0]);
   },
   { deep: true },
 );
@@ -431,6 +484,13 @@ watch(
     border-radius: 10px;
     border: solid 1px #eeeff1;
     background-color: #fff;
+
+    @media screen and (max-width: 1059px) {
+      box-shadow: unset;
+      border-radius: unset;
+      border: unset;
+      background-color: inherit;
+    }
   }
 
   &__body-header {
@@ -444,6 +504,10 @@ watch(
     display: flex;
     align-items: center;
     gap: 20px;
+
+    @media screen and (max-width: 1059px) {
+      display: none;
+    }
 
     span {
       color: #a6b7d4;
@@ -466,21 +530,59 @@ watch(
     background-color: #fff;
     white-space: nowrap;
 
+    @media screen and (max-width: 1059px) {
+      display: flex;
+    }
+
+    // th {
+    //   width: 100%;
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    // }
+
     thead {
+      @media screen and (max-width: 1059px) {
+        display: none;
+      }
+
       th {
         border: 1px solid #eeeff1;
         cursor: pointer;
         padding: 14px 10px;
         overflow: hidden;
 
+        &:first-child {
+          max-width: calc(71 / 1449 * 100%);
+        }
+
+        &:nth-child(2) {
+          max-width: calc(20 / 1449 * 100%);
+        }
+
+        &:nth-child(3) {
+          max-width: calc(623 / 1449 * 100%);
+        }
+
+        &:nth-child(4) {
+          max-width: calc(216 / 1449 * 100%);
+        }
+
+        &:nth-child(5) {
+          max-width: calc(216 / 1449 * 100%);
+        }
+
+        &:nth-child(6) {
+          max-width: calc(167 / 1449 * 100%);
+        }
+
+        &:last-child {
+          max-width: calc(142 / 1449 * 100%);
+        }
+
         span {
           display: block;
           font-weight: 600;
         }
-      }
-
-      span {
-        display: block;
       }
 
       p {
@@ -503,16 +605,35 @@ watch(
     }
 
     tbody {
+      @media screen and (max-width: 1059px) {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      tr {
+        @media screen and (max-width: 1059px) {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          padding: 15px 15px 25px;
+          border-radius: 10px;
+          box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.07);
+          border: solid 1px #eeeff1;
+          background-color: #fff;
+        }
+      }
+
       button {
         cursor: pointer;
       }
 
-
       th {
         padding: 5px 7px 0 7px;
 
-        span {
-          margin: 0 5px 0 0;
+        @media screen and (max-width: 1059px) {
+          padding: 0;
         }
       }
     }
@@ -520,7 +641,7 @@ watch(
 
   .table {
     .active {
-      border: red 4px dashed;
+      border: dashed 2px #a6b7d4;
     }
 
     .rotate {
@@ -529,11 +650,43 @@ watch(
       transform: rotate(-90deg);
     }
 
+    &__buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: auto;
+
+      @media screen and (max-width: 1059px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    &__button-col {
+      width: 100%;
+      height: 44px;
+
+      @media screen and (max-width: 1059px) {
+        width: auto;
+        height: auto;
+      }
+
+      span {
+        pointer-events: none;
+        margin: 0 0 0 5px;
+      }
+    }
+
     &__action-buttons {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
+
+      @media screen and (max-width: 1059px) {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
 
     &__delete-button {
@@ -543,11 +696,18 @@ watch(
       width: 179px;
       padding: 7px 19px;
       border-radius: 5px;
-      box-shadow: 0 0 3px 0 #000, inset 0 1px 2px 0 rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 0 3px 0 #000,
+        inset 0 1px 2px 0 rgba(255, 255, 255, 0.5);
       background-color: #fff;
       z-index: 2;
       font-size: 14px;
       color: #ae0a0a;
+
+      @media screen and (max-width: 1059px) {
+        top: 20px;
+        left: 0;
+      }
     }
 
     &__cell-content {
@@ -570,6 +730,17 @@ watch(
       border-radius: 0 4px 4px 0;
       background-color: #f6f5f3;
     }
+
+    .title {
+      margin: 0 0 5px;
+      font-size: 10px;
+      color: #8f8f8f;
+      display: none;
+
+      @media screen and (max-width: 1059px) {
+        display: block;
+      }
+    }
   }
 }
 </style>
@@ -581,18 +752,26 @@ watch(
   }
 
   &__selected {
+    padding: 0 !important; //
+    margin: 0 !important; //
     opacity: 1 !important;
     overflow: hidden;
     text-wrap: nowrap;
-    margin-top: 8px !important;
+    color: #000 !important;
+
+    @media screen and (max-width: 1059px) {
+      text-wrap: wrap;
+    }
   }
 
   &__selected-options {
+    padding: 0 !important;
     flex-wrap: nowrap !important;
   }
 
   &__search {
-    margin-top: 8px !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   &__open-indicator {
@@ -612,9 +791,15 @@ watch(
   }
 
   &__dropdown-toggle {
+    margin: 0 !important;
+    padding: 7px 15px !important;
     border-radius: 5px !important;
     border: solid 1px #ccc !important;
     background-color: #fff !important;
+
+    @media screen and (max-width: 1059px) {
+      padding: 10px 15px 9px !important;
+    }
   }
 
   &__dropdown-menu {
@@ -630,7 +815,8 @@ watch(
   }
 
   .vs1 {
-    &__listbox {}
+    &__listbox {
+    }
   }
 }
 

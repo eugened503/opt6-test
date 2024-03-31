@@ -23,10 +23,15 @@
 
 <script setup>
 import { ref } from "vue";
+
+// эмиты
 const emit = defineEmits(["displayColumnsMenuToggle"]);
+
+// данные
 const displayingColumns = ref(false);
 const columnOrder = ref(false);
 
+// методы
 const displayingColumnsToggle = () => {
   displayingColumns.value = true;
   columnOrder.value = false;

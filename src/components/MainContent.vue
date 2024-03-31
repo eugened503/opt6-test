@@ -26,21 +26,28 @@
       <DisplayColumnsMenu
         v-if="isDisplayColumnsMenu"
         @display-columns-menu-toggle="displayColumnsMenuToggle"
+        @get-checked-names="getCheckedNames"
       />
     </div>
-    <TheTable />
+    <TheTable :checkedNamesArr="checkedNamesArr" />
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import gearWheel from "@/assets/images/gearWheel.svg";
 import TheTable from "@/components/TheTable.vue";
 import ContentMenu from "@/components/ContentMenu.vue";
 import DisplayColumnsMenu from "@/components/DisplayColumnsMenu.vue";
 import threeLines from "@/assets/images/threeLines.svg";
+
+// данные
 const isContentMenu = ref(false);
 const isDisplayColumnsMenu = ref(false);
+const checkedNamesArr = ref(reactive([]));
+
+// методы
+const getCheckedNames = (arr) => (checkedNamesArr.value = arr);
 
 const ContentMenuToggle = () => {
   isContentMenu.value = !isContentMenu.value;
@@ -61,10 +68,6 @@ const displayColumnsMenuToggle = () => {
   @media screen and (max-width: 767px) {
     padding: 16px 10px;
     width: 100%;
-  }
-
-  @media screen and (max-width: 375px) {
-    //margin: 0 0 16px;
   }
 
   &__header {

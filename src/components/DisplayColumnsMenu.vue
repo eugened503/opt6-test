@@ -2,7 +2,6 @@
   <div class="menu">
     <button
       class="menu__button"
-      :class="{ active: displayingColumns }"
       type="button"
       @click="emit('displayColumnsMenuToggle')"
     >
@@ -11,7 +10,12 @@
     </button>
     <div class="menu__body">
       <label for="id">
-        <input type="checkbox" id="id" value="id" v-model="checkedNames.id" />
+        <input
+          type="checkbox"
+          id="id"
+          value="id"
+          v-model="checkedNames[0].id"
+        />
         <span>ID</span>
       </label>
 
@@ -20,7 +24,7 @@
           type="checkbox"
           id="action"
           value="action"
-          v-model="checkedNames.action"
+          v-model="checkedNames[0].action"
         />
         <span>Действие</span>
       </label>
@@ -30,7 +34,7 @@
           type="checkbox"
           id="nameUnit"
           value="nameUnit"
-          v-model="checkedNames.nameUnit"
+          v-model="checkedNames[0].nameUnit"
         />
         <span>Наименование единицы</span>
       </label>
@@ -40,7 +44,7 @@
           type="checkbox"
           id="price"
           value="price"
-          v-model="checkedNames.price"
+          v-model="checkedNames[0].price"
         />
         <span>Цена</span>
       </label>
@@ -50,7 +54,7 @@
           type="checkbox"
           id="quantity"
           value="quantity"
-          v-model="checkedNames.quantity"
+          v-model="checkedNames[0].quantity"
         />
         <span>Кол-во</span>
       </label>
@@ -60,7 +64,7 @@
           type="checkbox"
           id="productName"
           value="productName"
-          v-model="checkedNames.productName"
+          v-model="checkedNames[0].productName"
         />
         <span>Название товара</span>
       </label>
@@ -70,7 +74,7 @@
           type="checkbox"
           id="total"
           value="total"
-          v-model="checkedNames.total"
+          v-model="checkedNames[0].total"
         />
         <span>Итого</span>
       </label>
@@ -80,20 +84,26 @@
 
 <script setup>
 import { watch, toRef, reactive } from "vue";
+
+// эмиты
 const emit = defineEmits(["getCheckedNames", "displayColumnsMenuToggle"]);
 
+// данные
 const checkedNames = toRef(
-  reactive({
-    id: true,
-    action: true,
-    nameUnit: true,
-    price: true,
-    quantity: true,
-    productName: true,
-    total: true,
-  }),
+  reactive([
+    {
+      id: true,
+      action: true,
+      nameUnit: true,
+      price: true,
+      quantity: true,
+      productName: true,
+      total: true,
+    },
+  ]),
 );
 
+// наблюдатели
 watch(
   checkedNames,
   (newCheckedNames) => {
@@ -120,6 +130,7 @@ watch(
     inset 0 1px 2px 0 rgba(255, 255, 255, 0.5);
   background-color: #fff;
   padding: 7px 10px;
+  z-index: 1;
 
   &__body {
     display: flex;
