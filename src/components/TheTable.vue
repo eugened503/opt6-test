@@ -14,7 +14,7 @@
       <div class="table-wrapper__body-header">
         <div class="table-wrapper__body-header-content">
           <span>Сохранить изменения</span>
-          <button type="button">
+          <button type="button" @click="fetchData">
             <gearWheel />
           </button>
         </div>
@@ -412,6 +412,20 @@ const addTriangleIcon = () => {
 //   colsThead[5].style.width = "calc(170 / 1460 * 100%)";
 //   colsThead[6].style.width = "calc(151 / 1460 * 100%)";
 // };
+
+// отправка данных на бекенд
+const fetchData = () => {
+  const url = "https://jsonplaceholder.typicode.com/posts/";
+
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(tableDataConverter.value),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.log("error", error));
+}
 
 // хуки
 onMounted(() => {
