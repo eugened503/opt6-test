@@ -602,13 +602,13 @@ watch(
       transform: rotate(-90deg);
     }
 
-    .id {
-      width: calc(71 / 1449 * 100%);
-    }
+    // .id {
+    //   width: calc(71 / 1449 * 100%);
+    // }
 
-    .action {
-      width: calc(20 / 1449 * 100%);
-    }
+    // .action {
+    //   width: calc(20 / 1449 * 100%);
+    // }
 
     // .nameUnit {
     //   width: calc(623 / 1449 * 100%);
@@ -622,13 +622,13 @@ watch(
     //   width: calc(216 / 1449 * 100%); //!
     // }
 
-    .productName {
-      width: calc(167 / 1449 * 100%);
-    }
+    // .productName {
+    //   width: calc(167 / 1449 * 100%);
+    // }
 
-    .total {
-      width: calc(142 / 1449 * 100%);
-    }
+    // .total {
+    //   width: calc(142 / 1449 * 100%);
+    // }
 
     &__buttons {
       display: flex;
