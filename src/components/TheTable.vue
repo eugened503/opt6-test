@@ -1,11 +1,7 @@
 <template>
   <div class="table-wrapper">
     <div class="table-wrapper__header">
-      <button
-        type="button"
-        class="table-wrapper__add-row-button"
-        @click="addRow"
-      >
+      <button type="button" class="table-wrapper__add-row-button" @click="addRow">
         <CrossIcon />
         Добавить строку
       </button>
@@ -13,8 +9,9 @@
     <div class="table-wrapper__body">
       <div class="table-wrapper__body-header">
         <div class="table-wrapper__body-header-content">
-          <span>Сохранить изменения</span>
-          <button type="button" @click="fetchData">
+          <button type="button" class="table-wrapper__save-button" :disabled="!isSave" @click="fetchData">Сохранить
+            изменения</button>
+          <button type="button">
             <gearWheel />
           </button>
         </div>
@@ -23,11 +20,8 @@
         <thead>
           <tr>
             <th scope="col" v-for="item in col">
-              <span
-                v-if="item.label !== 'id' && item.label !== 'action'"
-                @mouseover="mouseOver"
-                @mouseleave="mouseLeave"
-              >
+              <span v-if="item.label !== 'id' && item.label !== 'action'" @mouseover="mouseOver"
+                @mouseleave="mouseLeave">
                 {{ item.label }}
               </span>
               <span v-else @mouseover="mouseOver" @mouseleave="mouseLeave">
@@ -40,78 +34,43 @@
           <tr v-for="(item, index) in tableDataConverter" :key="item.id">
             <th scope="row" v-for="el in item">
               <div>
-                <span v-if="item.price === el && '' !== el" class="title"
-                  >Цена</span
-                >
-                <span v-if="item.quantity === el && '' !== el" class="title"
-                  >Кол-во</span
-                >
-                <span v-if="item.productName === el && '' !== el" class="title"
-                  >Название товара</span
-                >
-                <span v-if="item.total === el && '' !== el" class="title"
-                  >Итого</span
-                >
-                <div
-                  v-if="
-                    item.nameUnit !== el &&
-                    item.id !== el &&
-                    item.action !== el &&
-                    '' !== el
-                  "
-                  class="table__cell-content"
-                >
+                <span v-if="item.price === el && '' !== el" class="title">Цена</span>
+                <span v-if="item.quantity === el && '' !== el" class="title">Кол-во</span>
+                <span v-if="item.productName === el && '' !== el" class="title">Название товара</span>
+                <span v-if="item.total === el && '' !== el" class="title">Итого</span>
+                <div v-if="item.nameUnit !== el &&
+        item.id !== el &&
+        item.action !== el &&
+        '' !== el
+        " class="table__cell-content">
                   {{ el }}
-                  <button
-                    v-if="item.productName === el"
-                    class="table__cell-button"
-                  >
+                  <button v-if="item.productName === el" class="table__cell-button">
                     <triangleSvg class="rotate" />
                   </button>
                 </div>
                 <div class="table__buttons" v-if="item.id === el">
                   <span class="title">Номер строки</span>
-                  <button
-                    class="table__button-col"
-                    type="button"
-                    @mouseover="mouseOverSelectRow"
-                    @mouseleave="mouseLeaveSelectRow"
-                  >
+                  <button class="table__button-col" type="button" @mouseover="mouseOverSelectRow"
+                    @mouseleave="mouseLeaveSelectRow">
                     <threeLines />
                     <span>{{ index + 1 }}</span>
                   </button>
                 </div>
-                <div
-                  v-if="item.action === el && item.action === null"
-                  class="table__action-buttons"
-                >
+                <div v-if="item.action === el && item.action === null" class="table__action-buttons">
                   <span class="title">Действие</span>
-                  <button
-                    type="button"
-                    @click="
-                      isDeleteId = isDeleteId === item.id ? null : item.id
-                    "
-                  >
+                  <button type="button" @click="
+        isDeleteId = isDeleteId === item.id ? null : item.id
+        ">
                     <threeDots />
                   </button>
-                  <button
-                    v-if="item.id === isDeleteId"
-                    type="button"
-                    class="table__delete-button"
-                    @click="deleteProduct(index)"
-                  >
+                  <button v-if="item.id === isDeleteId" type="button" class="table__delete-button"
+                    @click="deleteProduct(index)">
                     удалить
                   </button>
                 </div>
-                <div
-                  v-if="item.nameUnit && item.nameUnit === el"
-                  class="table__select"
-                >
+                <div v-if="item.nameUnit && item.nameUnit === el" class="table__select">
                   <span class="title">Наименование единицы</span>
-                  <v-select
-                    v-model="selectedNameUnits[index]"
-                    :options="options"
-                  />
+                  <v-select v-model="selectedNameUnits[index]" :options="options" />
                 </div>
               </div>
             </th>
@@ -151,6 +110,7 @@ const props = defineProps({
 
 // данные
 const isSelect = ref(false);
+const isSave = ref(false);
 const isCheckedNames = ref(reactive([]));
 const hideElementIndex = ref(reactive([]));
 const isDeleteId = ref("");
@@ -375,7 +335,7 @@ const buttonListeners = () => {
   document.addEventListener("mousedown", function (e) {
     if (e.target.classList.contains("table__button-col")) {
       console.log("mousedown");
-      e.target.parentElement.parentElement.parentElement.classList.add(
+      e.target.parentElement.parentElement.parentElement.parentElement.classList.add(
         "active",
       );
       isSelectRowEvent.value = e;
@@ -417,14 +377,17 @@ const addTriangleIcon = () => {
 const fetchData = () => {
   const url = "https://jsonplaceholder.typicode.com/posts/";
 
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(tableDataConverter.value),
-      headers: { "Content-Type": "application/json" },
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(tableDataConverter.value),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      isSave.value = false;
+      console.log(data);
     })
-      .then((res) => res.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.log("error", error));
+    .catch((error) => console.log("error", error));
 }
 
 // хуки
@@ -442,7 +405,7 @@ onMounted(() => {
 // наблюдатели
 watch(isSelect, (newIsSelect) => {
   if (!newIsSelect) {
-    isSelectRowEvent.value.target.parentElement.parentElement.parentElement.classList.remove(
+    isSelectRowEvent.value.target.parentElement.parentElement.parentElement.parentElement.classList.remove(
       "active",
     );
   }
@@ -457,6 +420,18 @@ watch(
   },
   { deep: true },
 );
+
+watch(
+  tableDataConverter,
+  (newTableDataConverter) => {
+    if (newTableDataConverter) {
+      isSave.value = true;
+    }
+    //console.log('newTableDataConverter', newTableDataConverter);
+  },
+  { deep: true },
+);
+
 
 watch(
   props,
@@ -489,6 +464,15 @@ watch(
     font-size: 14px;
     gap: 7px;
     cursor: pointer;
+  }
+
+  &__save-button {
+    font-size: 12px;
+    color: #2f8cff;
+
+    &:disabled {
+      color: #a6b7d4;
+    }
   }
 
   &__body {
@@ -829,8 +813,7 @@ watch(
   }
 
   .vs1 {
-    &__listbox {
-    }
+    &__listbox {}
   }
 }
 
