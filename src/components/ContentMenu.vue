@@ -2,7 +2,6 @@
   <div class="menu">
     <button
       class="menu__button"
-      :class="{ active: displayingColumns }"
       type="button"
       @click="displayingColumnsToggle"
     >
@@ -13,7 +12,6 @@
       class="menu__button"
       :class="{ active: columnOrder }"
       type="button"
-      @click="columnOrderToggle"
     >
       <span>Порядок столбцов</span>
       <div class="menu__arrow"></div>
@@ -22,26 +20,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 
 // эмиты
 const emit = defineEmits(["displayColumnsMenuToggle"]);
 
-// данные
-const displayingColumns = ref(false);
-const columnOrder = ref(false);
-
 // методы
 const displayingColumnsToggle = () => {
-  displayingColumns.value = true;
-  columnOrder.value = false;
   emit("displayColumnsMenuToggle");
 };
 
-const columnOrderToggle = () => {
-  columnOrder.value = true;
-  displayingColumns.value = false;
-};
 </script>
 
 <style scoped lang="scss">
@@ -64,6 +51,10 @@ const columnOrderToggle = () => {
     align-items: center;
     padding: 7px 9px;
 
+    &:hover {
+      background-color: #eef3f8;
+    }
+
     &:nth-child(1) {
       border-radius: 5px 5px 0 0;
     }
@@ -77,10 +68,6 @@ const columnOrderToggle = () => {
       text-align: left;
       font-size: 14px;
       color: #161616;
-    }
-
-    &.active {
-      background-color: #eef3f8;
     }
   }
 

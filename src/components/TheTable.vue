@@ -19,7 +19,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col" v-for="item in col">
+            <th scope="col" v-for="item in col" :class="[item.prop]">
               <span v-if="item.label !== 'id' && item.label !== 'action'" @mouseover="mouseOver"
                 @mouseleave="mouseLeave">
                 {{ item.label }}
@@ -32,7 +32,7 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in tableDataConverter" :key="item.id">
-            <th scope="row" v-for="el in item">
+            <td scope="row" v-for="el in item">
               <div>
                 <span v-if="item.price === el && '' !== el" class="title">Цена</span>
                 <span v-if="item.quantity === el && '' !== el" class="title">Кол-во</span>
@@ -68,12 +68,13 @@
                     удалить
                   </button>
                 </div>
-                <div v-if="item.nameUnit && item.nameUnit === el" class="table__select">
+                <div v-if="item.nameUnit && item.nameUnit === el" class="table__select"
+                  :class="{ 'select-display': item.nameUnit === 'Выберите значение' }">
                   <span class="title">Наименование единицы</span>
                   <v-select v-model="selectedNameUnits[index]" :options="options" />
                 </div>
               </div>
-            </th>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -362,17 +363,6 @@ const addTriangleIcon = () => {
   });
 };
 
-// const styleTable = () => {
-//   const colsThead = document.querySelectorAll("thead th");
-//   colsThead[0].style.width = "calc(50 / 1460 * 100%)";
-//   colsThead[1].style.width = "calc(30 / 1460 * 100%)";
-//   colsThead[2].style.width = "calc(630 / 1460 * 100%)";
-//   colsThead[3].style.width = "calc(218 / 1460 * 100%)";
-//   colsThead[4].style.width = "calc(218 / 1460 * 100%)";
-//   colsThead[5].style.width = "calc(170 / 1460 * 100%)";
-//   colsThead[6].style.width = "calc(151 / 1460 * 100%)";
-// };
-
 // отправка данных на бекенд
 const fetchData = () => {
   const url = "https://jsonplaceholder.typicode.com/posts/";
@@ -398,7 +388,6 @@ onMounted(() => {
   nextTick(() => {
     buttonListeners();
     addTriangleIcon();
-    //styleTable();
   });
 });
 
@@ -427,7 +416,6 @@ watch(
     if (newTableDataConverter) {
       isSave.value = true;
     }
-    //console.log('newTableDataConverter', newTableDataConverter);
   },
   { deep: true },
 );
@@ -526,17 +514,10 @@ watch(
     border: none;
     text-align: left;
     background-color: #fff;
-    white-space: nowrap;
 
     @media screen and (max-width: 1059px) {
       display: flex;
     }
-
-    // th {
-    //   width: 100%;
-    //   overflow: hidden;
-    //   text-overflow: ellipsis;
-    // }
 
     thead {
       @media screen and (max-width: 1059px) {
@@ -547,35 +528,7 @@ watch(
         border: 1px solid #eeeff1;
         cursor: pointer;
         padding: 14px 10px;
-        overflow: hidden;
-
-        &:first-child {
-          max-width: calc(71 / 1449 * 100%);
-        }
-
-        &:nth-child(2) {
-          max-width: calc(20 / 1449 * 100%);
-        }
-
-        &:nth-child(3) {
-          max-width: calc(623 / 1449 * 100%);
-        }
-
-        &:nth-child(4) {
-          max-width: calc(216 / 1449 * 100%);
-        }
-
-        &:nth-child(5) {
-          max-width: calc(216 / 1449 * 100%);
-        }
-
-        &:nth-child(6) {
-          max-width: calc(167 / 1449 * 100%);
-        }
-
-        &:last-child {
-          max-width: calc(142 / 1449 * 100%);
-        }
+        white-space: nowrap;
 
         span {
           display: block;
@@ -594,11 +547,8 @@ watch(
       }
     }
 
+    th,
     td {
-      text-align: left;
-    }
-
-    th {
       text-align: left;
     }
 
@@ -627,8 +577,12 @@ watch(
         cursor: pointer;
       }
 
-      th {
-        padding: 5px 7px 0 7px;
+      td {
+        padding: 5px 7px;
+        position: relative;
+        max-width: 100px;
+        white-space: nowrap;
+        text-overflow: clip;
 
         @media screen and (max-width: 1059px) {
           padding: 0;
@@ -646,6 +600,34 @@ watch(
       width: 5px;
       height: 5px;
       transform: rotate(-90deg);
+    }
+
+    .id {
+      width: calc(71 / 1449 * 100%);
+    }
+
+    .action {
+      width: calc(20 / 1449 * 100%);
+    }
+
+    // .nameUnit {
+    //   width: calc(623 / 1449 * 100%);
+    // }
+
+    // .price {
+    //   width: calc(216 / 1449 * 100%); //!
+    // }
+
+    // .quantity {
+    //   width: calc(216 / 1449 * 100%); //!
+    // }
+
+    .productName {
+      width: calc(167 / 1449 * 100%);
+    }
+
+    .total {
+      width: calc(142 / 1449 * 100%);
     }
 
     &__buttons {
@@ -714,6 +696,7 @@ watch(
       border: solid 1px #ccc;
       background-color: #fff;
       padding: 10px 15px 9px;
+      overflow: hidden;
     }
 
     &__cell-button {
@@ -750,11 +733,11 @@ watch(
   }
 
   &__selected {
-    padding: 0 !important; //
-    margin: 0 !important; //
+    padding: 0 !important;
+    margin: 0 !important;
     opacity: 1 !important;
-    overflow: hidden;
-    text-wrap: nowrap;
+    white-space: nowrap;
+    text-overflow: clip;
     color: #000 !important;
 
     @media screen and (max-width: 1059px) {
@@ -765,6 +748,8 @@ watch(
   &__selected-options {
     padding: 0 !important;
     flex-wrap: nowrap !important;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   &__search {
@@ -811,10 +796,10 @@ watch(
       color: #161616;
     }
   }
+}
 
-  .vs1 {
-    &__listbox {}
-  }
+.select-display .vs__selected {
+  display: none;
 }
 
 #vs4__listbox {
