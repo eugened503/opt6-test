@@ -1,7 +1,23 @@
-# Vue 3 + Vite
+# Тестовое задание для компании «ОПТ6»
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Чек-лист:
+[x] Выделение строки / перенос строки
+[x] Обновление нумерации строки при переносе и добавлении строк
+[x] Изменение ширины колонок
+[x] Обрезка текста строк при изменении ширины колонок. Минимальная ширина - ширина названия колонки
+[x] Меню отображения столбцов с соответствующим функционалом
+[x] Кнопка “сохранить изменения”.
+Mеняет цвет на голубой при изменении данных таблицы. К кнопке привязана функция   отправки данных на бекенд (в нашем случае на фейковый адрес)
+[x] Добавление строки
+[x] Удаление строки
 
-## Recommended IDE Setup
+### Развертывание задания
+- Скопируйте репозиторий
+    - `https://github.com/eugened503/opt6-test.git`
+- Установите пакеты
+     - `npm install`
+- Запустите версию для разработки (ее можно увидеть на локальном сервере)
+    - `npm run dev`
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+### Деплой задания
+[ссылка на готовое задание](https://opt6-test-deploy.vercel.app/)
