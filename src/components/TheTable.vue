@@ -45,7 +45,7 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in tableDataConverter" :key="item.id">
-            <td scope="row" v-for="el in item">
+            <td scope="row" v-for="(el, indexEl) in item" :class="[indexEl]">
               <div>
                 <span v-if="item.price === el && '' !== el" class="title"
                   >Цена</span
@@ -78,12 +78,7 @@
                 </div>
                 <div class="table__buttons" v-if="item.id === el">
                   <span class="title">Номер строки</span>
-                  <button
-                    class="table__button-col"
-                    type="button"
-                    @mouseover="mouseOverSelectRow"
-                    @mouseleave="mouseLeaveSelectRow"
-                  >
+                  <button class="table__button-col" type="button">
                     <threeLines />
                     <span>{{ index + 1 }}</span>
                   </button>
@@ -267,8 +262,8 @@ const addDataProduct = () => {
 const rowDrop = () => {
   const tbody = document.querySelector("tbody");
   rowDropSortable.value = Sortable.create(tbody, {
-    disabled: true,
     animation: 180,
+    delay: 0,
     onEnd({ newIndex, oldIndex }) {
       const currRow = tableDataConverter.value.splice(oldIndex, 1)[0];
       tableDataConverter.value.splice(newIndex, 0, currRow);
@@ -375,18 +370,9 @@ const mouseLeave = () => {
   columnDropSortable.value.options.disabled = true;
 };
 
-const mouseOverSelectRow = () => {
-  rowDropSortable.value.options.disabled = false;
-};
-
-const mouseLeaveSelectRow = () => {
-  rowDropSortable.value.options.disabled = true;
-};
-
 const buttonListeners = () => {
   document.addEventListener("mousedown", function (e) {
     if (e.target.classList.contains("table__button-col")) {
-      console.log("mousedown");
       e.target.parentElement.parentElement.parentElement.parentElement.classList.add(
         "active",
       );
@@ -397,7 +383,6 @@ const buttonListeners = () => {
 
   document.addEventListener("mouseup", function (e) {
     if (e.target.classList.contains("table__button-col")) {
-      console.log("mouseup");
       isSelect.value = false;
     }
   });
