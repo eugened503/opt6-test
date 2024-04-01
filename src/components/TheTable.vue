@@ -1,7 +1,11 @@
 <template>
   <div class="table-wrapper">
     <div class="table-wrapper__header">
-      <button type="button" class="table-wrapper__add-row-button" @click="addRow">
+      <button
+        type="button"
+        class="table-wrapper__add-row-button"
+        @click="addRow"
+      >
         <CrossIcon />
         Добавить строку
       </button>
@@ -9,8 +13,14 @@
     <div class="table-wrapper__body">
       <div class="table-wrapper__body-header">
         <div class="table-wrapper__body-header-content">
-          <button type="button" class="table-wrapper__save-button" :disabled="!isSave" @click="fetchData">Сохранить
-            изменения</button>
+          <button
+            type="button"
+            class="table-wrapper__save-button"
+            :disabled="!isSave"
+            @click="fetchData"
+          >
+            Сохранить изменения
+          </button>
           <button type="button">
             <gearWheel />
           </button>
@@ -20,12 +30,15 @@
         <thead>
           <tr>
             <th scope="col" v-for="item in col" :class="[item.prop]">
-              <span v-if="item.label !== 'id' && item.label !== 'action'" @mouseover="mouseOver"
-                @mouseleave="mouseLeave">
+              <span
+                v-if="item.label !== 'id' && item.label !== 'action'"
+                @mouseover="mouseOver"
+                @mouseleave="mouseLeave"
+              >
                 {{ item.label }}
               </span>
               <span v-else @mouseover="mouseOver" @mouseleave="mouseLeave">
-                &nbsp;
+                &nbsp;&nbsp;
               </span>
             </th>
           </tr>
@@ -34,44 +47,81 @@
           <tr v-for="(item, index) in tableDataConverter" :key="item.id">
             <td scope="row" v-for="el in item">
               <div>
-                <span v-if="item.price === el && '' !== el" class="title">Цена</span>
-                <span v-if="item.quantity === el && '' !== el" class="title">Кол-во</span>
-                <span v-if="item.productName === el && '' !== el" class="title">Название товара</span>
-                <span v-if="item.total === el && '' !== el" class="title">Итого</span>
-                <div v-if="item.nameUnit !== el &&
-        item.id !== el &&
-        item.action !== el &&
-        '' !== el
-        " class="table__cell-content">
+                <span v-if="item.price === el && '' !== el" class="title"
+                  >Цена</span
+                >
+                <span v-if="item.quantity === el && '' !== el" class="title"
+                  >Кол-во</span
+                >
+                <span v-if="item.productName === el && '' !== el" class="title"
+                  >Название товара</span
+                >
+                <span v-if="item.total === el && '' !== el" class="title"
+                  >Итого</span
+                >
+                <div
+                  v-if="
+                    item.nameUnit !== el &&
+                    item.id !== el &&
+                    item.action !== el &&
+                    '' !== el
+                  "
+                  class="table__cell-content"
+                >
                   {{ el }}
-                  <button v-if="item.productName === el" class="table__cell-button">
+                  <button
+                    v-if="item.productName === el"
+                    class="table__cell-button"
+                  >
                     <triangleSvg class="rotate" />
                   </button>
                 </div>
                 <div class="table__buttons" v-if="item.id === el">
                   <span class="title">Номер строки</span>
-                  <button class="table__button-col" type="button" @mouseover="mouseOverSelectRow"
-                    @mouseleave="mouseLeaveSelectRow">
+                  <button
+                    class="table__button-col"
+                    type="button"
+                    @mouseover="mouseOverSelectRow"
+                    @mouseleave="mouseLeaveSelectRow"
+                  >
                     <threeLines />
                     <span>{{ index + 1 }}</span>
                   </button>
                 </div>
-                <div v-if="item.action === el && item.action === null" class="table__action-buttons">
+                <div
+                  v-if="item.action === el && item.action === null"
+                  class="table__action-buttons"
+                >
                   <span class="title">Действие</span>
-                  <button type="button" @click="
-        isDeleteId = isDeleteId === item.id ? null : item.id
-        ">
+                  <button
+                    type="button"
+                    @click.stop="
+                      isDeleteId = isDeleteId === item.id ? null : item.id
+                    "
+                  >
                     <threeDots />
                   </button>
-                  <button v-if="item.id === isDeleteId" type="button" class="table__delete-button"
-                    @click="deleteProduct(index)">
+                  <button
+                    v-if="item.id === isDeleteId"
+                    type="button"
+                    class="table__delete-button"
+                    @click.stop="deleteProduct(index)"
+                  >
                     удалить
                   </button>
                 </div>
-                <div v-if="item.nameUnit && item.nameUnit === el" class="table__select"
-                  :class="{ 'select-display': item.nameUnit === 'Выберите значение' }">
+                <div
+                  v-if="item.nameUnit && item.nameUnit === el"
+                  class="table__select"
+                  :class="{
+                    'select-display': item.nameUnit === 'Выберите значение',
+                  }"
+                >
                   <span class="title">Наименование единицы</span>
-                  <v-select v-model="selectedNameUnits[index]" :options="options" />
+                  <v-select
+                    v-model="selectedNameUnits[index]"
+                    :options="options"
+                  />
                 </div>
               </div>
             </td>
@@ -295,6 +345,7 @@ const resizableTable = () => {
       grip.style.width = "5px";
       grip.style.position = "absolute";
       grip.style.cursor = "col-resize";
+      grip.style.userSelect = "none";
 
       grip.addEventListener("mousedown", function (e) {
         thElm = th;
@@ -378,7 +429,7 @@ const fetchData = () => {
       console.log(data);
     })
     .catch((error) => console.log("error", error));
-}
+};
 
 // хуки
 onMounted(() => {
@@ -420,7 +471,6 @@ watch(
   { deep: true },
 );
 
-
 watch(
   props,
   (newProps) => {
@@ -434,12 +484,20 @@ watch(
 .table-wrapper {
   margin: 25px 0 0;
 
+  @media screen and (max-width: 767px) {
+    margin: 30px 0 0;
+  }
+
   &__header {
-    padding: 20px 25px;
+    padding: 17px 25px 17px 25px;
     border-radius: 10px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
     border: solid 1px #eeeff1;
     background-color: #fff;
+
+    @media screen and (max-width: 767px) {
+      padding: 17px 25px 19px 25px;
+    }
   }
 
   &__add-row-button {
@@ -447,10 +505,10 @@ watch(
     align-items: center;
     background-color: #2f8cff;
     border-radius: 5px;
-    padding: 15px 10px;
+    padding: 7px 16px 8px 13px;
     color: #fff;
     font-size: 14px;
-    gap: 7px;
+    gap: 3px;
     cursor: pointer;
   }
 
@@ -484,16 +542,16 @@ watch(
     padding: 10px;
     align-items: center;
     justify-content: flex-end;
+
+    @media screen and (max-width: 1059px) {
+      display: none;
+    }
   }
 
   &__body-header-content {
     display: flex;
     align-items: center;
-    gap: 20px;
-
-    @media screen and (max-width: 1059px) {
-      display: none;
-    }
+    gap: 17px;
 
     span {
       color: #a6b7d4;
@@ -504,6 +562,7 @@ watch(
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 0 3px 0 0;
       cursor: pointer;
     }
   }
@@ -514,6 +573,7 @@ watch(
     border: none;
     text-align: left;
     background-color: #fff;
+    overflow-x: hidden;
 
     @media screen and (max-width: 1059px) {
       display: flex;
@@ -524,14 +584,20 @@ watch(
         display: none;
       }
 
+      tr {
+        height: 44px;
+      }
+
       th {
         border: 1px solid #eeeff1;
         cursor: pointer;
-        padding: 14px 10px;
-        white-space: nowrap;
+        padding: 11px 10px;
+        overflow: hidden;
 
         span {
+          position: relative;
           display: block;
+          white-space: nowrap;
           font-weight: 600;
         }
       }
@@ -564,8 +630,8 @@ watch(
         @media screen and (max-width: 1059px) {
           display: flex;
           flex-direction: column;
-          gap: 15px;
-          padding: 15px 15px 25px;
+          gap: 12px;
+          padding: 12px 15px 25px;
           border-radius: 10px;
           box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.07);
           border: solid 1px #eeeff1;
@@ -580,12 +646,13 @@ watch(
       td {
         padding: 5px 7px;
         position: relative;
-        max-width: 100px;
+        max-width: 46px;
         white-space: nowrap;
         text-overflow: clip;
 
         @media screen and (max-width: 1059px) {
           padding: 0;
+          max-width: unset;
         }
       }
     }
@@ -602,33 +669,13 @@ watch(
       transform: rotate(-90deg);
     }
 
-    // .id {
-    //   width: calc(71 / 1449 * 100%);
-    // }
+    .id {
+      width: 3.4%;
+    }
 
-    // .action {
-    //   width: calc(20 / 1449 * 100%);
-    // }
-
-    // .nameUnit {
-    //   width: calc(623 / 1449 * 100%);
-    // }
-
-    // .price {
-    //   width: calc(216 / 1449 * 100%); //!
-    // }
-
-    // .quantity {
-    //   width: calc(216 / 1449 * 100%); //!
-    // }
-
-    // .productName {
-    //   width: calc(167 / 1449 * 100%);
-    // }
-
-    // .total {
-    //   width: calc(142 / 1449 * 100%);
-    // }
+    .action {
+      width: 3.4%;
+    }
 
     &__buttons {
       display: flex;
@@ -644,11 +691,14 @@ watch(
 
     &__button-col {
       width: 100%;
-      height: 44px;
 
       @media screen and (max-width: 1059px) {
         width: auto;
         height: auto;
+      }
+
+      svg {
+        pointer-events: none;
       }
 
       span {
@@ -674,7 +724,7 @@ watch(
       top: 32px;
       left: 12px;
       width: 179px;
-      padding: 7px 19px;
+      padding: 5px 9px;
       border-radius: 5px;
       box-shadow:
         0 0 3px 0 #000,
@@ -682,10 +732,11 @@ watch(
       background-color: #fff;
       z-index: 2;
       font-size: 14px;
+      text-align: left;
       color: #ae0a0a;
 
       @media screen and (max-width: 1059px) {
-        top: 20px;
+        top: 36px;
         left: 0;
       }
     }
@@ -695,7 +746,7 @@ watch(
       border-radius: 5px;
       border: solid 1px #ccc;
       background-color: #fff;
-      padding: 10px 15px 9px;
+      padding: 8px 22px 8px;
       overflow: hidden;
     }
 
@@ -713,7 +764,7 @@ watch(
     }
 
     .title {
-      margin: 0 0 5px;
+      margin: 0 0 2px;
       font-size: 10px;
       color: #8f8f8f;
       display: none;
@@ -775,7 +826,7 @@ watch(
 
   &__dropdown-toggle {
     margin: 0 !important;
-    padding: 7px 15px !important;
+    padding: 5px 20px !important;
     border-radius: 5px !important;
     border: solid 1px #ccc !important;
     background-color: #fff !important;

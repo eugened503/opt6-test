@@ -1,5 +1,13 @@
 <template>
-  <div class="main-content">
+  <div
+    class="main-content"
+    @click="
+      () => {
+        isContentMenu = false;
+        isDisplayColumnsMenu = false;
+      }
+    "
+  >
     <div class="main-content__header">
       <button class="main-content__button" type="button">
         <threeLines />
@@ -15,7 +23,7 @@
       <button
         class="main-content__menu-button"
         type="button"
-        @click="ContentMenuToggle"
+        @click.stop="ContentMenuToggle"
       >
         <gearWheel />
       </button>
@@ -61,12 +69,12 @@ const displayColumnsMenuToggle = () => {
 
 <style scoped lang="scss">
 .main-content {
-  padding: 25px;
+  padding: 19px 25px 25px 25px;
   width: calc(1499 / 1728 * 100%);
   background-color: #fbfcfd;
 
   @media screen and (max-width: 767px) {
-    padding: 16px 10px;
+    padding: 9px 10px 16px;
     width: 100%;
   }
 
@@ -100,8 +108,12 @@ const displayColumnsMenuToggle = () => {
     position: relative;
     display: flex;
     justify-content: space-between;
-    margin: 25px 0 0;
+    margin: 22px 0 0;
     padding: 0 15px 0 0;
+
+    @media screen and (max-width: 767px) {
+      margin: 17px 0 0;
+    }
   }
 
   &__menu-nav {
@@ -113,10 +125,10 @@ const displayColumnsMenuToggle = () => {
       cursor: pointer;
 
       &:nth-child(2) {
-        margin: 0 25px 0 20px;
+        margin: 0px 28px 0 24px;
 
         @media screen and (max-width: 767px) {
-          margin: 0 20px 0 20px;
+          margin: 0 20px;
         }
       }
 
@@ -128,6 +140,7 @@ const displayColumnsMenuToggle = () => {
 
   &__menu-button {
     display: block;
+    padding: 4px 1px 0 5px;
     cursor: pointer;
 
     @media screen and (max-width: 767px) {

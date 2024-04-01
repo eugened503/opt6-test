@@ -1,9 +1,9 @@
 <template>
-  <div class="menu">
+  <div class="menu" @click.stop="() => null">
     <button
       class="menu__button"
       type="button"
-      @click="emit('displayColumnsMenuToggle')"
+      @click.stop="emit('displayColumnsMenuToggle')"
     >
       <div class="menu__arrow"></div>
       <span>Отображение столбцов</span>
@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-import { watch, toRef, reactive } from "vue";
+import { watch, toRef, reactive, onMounted } from "vue";
 
 // эмиты
 const emit = defineEmits(["getCheckedNames", "displayColumnsMenuToggle"]);
@@ -109,10 +109,17 @@ watch(
   (newCheckedNames) => {
     if (newCheckedNames) {
       emit("getCheckedNames", checkedNames.value);
+      localStorage.setItem("checkedNames", JSON.stringify(checkedNames.value));
     }
   },
   { deep: true },
 );
+
+onMounted(() => {
+  const currentCheckedNames =
+    JSON.parse(localStorage.getItem("checkedNames")) || checkedNames.value;
+  checkedNames.value = currentCheckedNames;
+});
 </script>
 
 <style scoped lang="scss">

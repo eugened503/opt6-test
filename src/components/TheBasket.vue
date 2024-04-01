@@ -31,7 +31,7 @@
   flex-direction: column;
   gap: 5px;
   max-width: 304px;
-  margin: 15px 10px 0 auto;
+  margin: 10px 10px 0 auto;
 
   @media screen and (max-width: 1059px) {
     margin: 15px 0 0 auto;
@@ -39,7 +39,7 @@
 
   &__body,
   &__footer {
-    padding: 15px;
+    padding: 12px 11px;
     border-radius: 5px;
     border: solid 1px #eeeff1;
     background-color: #fbfcfd;

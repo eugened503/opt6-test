@@ -3,16 +3,12 @@
     <button
       class="menu__button"
       type="button"
-      @click="displayingColumnsToggle"
+      @click.stop="displayingColumnsToggle"
     >
       <span>Отображение столбцов</span>
       <div class="menu__arrow"></div>
     </button>
-    <button
-      class="menu__button"
-      :class="{ active: columnOrder }"
-      type="button"
-    >
+    <button class="menu__button" type="button" @click.stop="() => null">
       <span>Порядок столбцов</span>
       <div class="menu__arrow"></div>
     </button>
@@ -20,7 +16,6 @@
 </template>
 
 <script setup>
-
 // эмиты
 const emit = defineEmits(["displayColumnsMenuToggle"]);
 
@@ -28,7 +23,6 @@ const emit = defineEmits(["displayColumnsMenuToggle"]);
 const displayingColumnsToggle = () => {
   emit("displayColumnsMenuToggle");
 };
-
 </script>
 
 <style scoped lang="scss">
@@ -50,6 +44,7 @@ const displayingColumnsToggle = () => {
     justify-content: space-between;
     align-items: center;
     padding: 7px 9px;
+    cursor: pointer;
 
     &:hover {
       background-color: #eef3f8;
