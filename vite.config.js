@@ -10,13 +10,4 @@ export default defineConfig({
     },
   },
   plugins: [vue(), svgLoader()],
-  // css: {
-  //   preprocessorOptions: {
-  //     scss: {
-  //       additionalData: `
-  //         @import "@/style.scss";
-  //       `,
-  //     },
-  //   },
-  // },
 });
