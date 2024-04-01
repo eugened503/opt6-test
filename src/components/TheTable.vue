@@ -654,14 +654,6 @@ watch(
       transform: rotate(-90deg);
     }
 
-    .id {
-      width: 3.4%;
-    }
-
-    .action {
-      width: 3.4%;
-    }
-
     &__buttons {
       display: flex;
       justify-content: space-between;
